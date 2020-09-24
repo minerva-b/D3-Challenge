@@ -92,7 +92,7 @@ function makeResponsive() {
         .attr('r', 10)
         .attr('fill', '#89bdd3')
         .attr('stroke-width', 0.5)
-        .attr('stroke', 'black');
+        .attr('stroke', '#e3e3e3');
 
     // Step 1: Initialize Tooltip
     var toolTip = d3.tip()
