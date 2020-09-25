@@ -8,14 +8,14 @@
 // -------------------------------------------------------------------------
 
 // Starting off by defining the AVG area dimensions:
-var svgWidth = 750;
-var svgHeight = 550;
+var svgWidth = 960;
+var svgHeight = 500;
 
 // Defining the chart's margins as an object:
 var chartMargin = {
     top: 20,
     right: 40,
-    bottom: 60,
+    bottom: 80,
     left: 100
 };
 
@@ -30,12 +30,13 @@ var svg = d3
 .attr('height', svgHeight)
 .attr('width', svgWidth);
 
-// Appending a group to the SVG area and shift ('translate') it to the right and down 
+// Appending a group to the SVG area and shift ('translate') it to the left and top 
 // to adhere to the margins set in the "chartMargin" object:
 var chartGroup = svg.append('g')
 .attr('transform', `translate(${chartMargin.left}, ${chartMargin.top})`);
 var textGroup = svg.append('g')
 .attr('transform', `translate(${chartMargin.left}, ${chartMargin.top})`);
+
 
 // Loading/pulling the data from 'data.csv' using D3:
 d3.csv('assets/data/data.csv').then(function(chartData) {
