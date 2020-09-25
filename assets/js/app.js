@@ -1,4 +1,3 @@
-
 // -------------------------------------------------------------------------
 // * REQUIRED SECTION OF ASSIGNMENT *
 // Creating a scatter plot between two of the data variables
@@ -9,15 +8,15 @@
 // -------------------------------------------------------------------------
 
 // Starting off by defining the AVG area dimensions:
-var svgWidth = 800;
-var svgHeight = 600;
+var svgWidth = 750;
+var svgHeight = 550;
 
 // Defining the chart's margins as an object:
 var chartMargin = {
-    top: 100,
-    right: 50,
-    bottom: 100,
-    left: 25
+    top: 20,
+    right: 40,
+    bottom: 60,
+    left: 100
 };
 
 // Defining the dimensions of the chart area:
@@ -35,12 +34,11 @@ var svg = d3
 // to adhere to the margins set in the "chartMargin" object:
 var chartGroup = svg.append('g')
 .attr('transform', `translate(${chartMargin.left}, ${chartMargin.top})`);
+var textGroup = svg.append('g')
+.attr('transform', `translate(${chartMargin.left}, ${chartMargin.top})`);
 
 // Loading/pulling the data from 'data.csv' using D3:
 d3.csv('assets/data/data.csv').then(function(chartData) {
-
-    // Printing the data:
-    // console.log(chartData);
 
     // Parsing the data, to format the values to string:
     chartData.forEach(function(data) {
@@ -48,19 +46,14 @@ d3.csv('assets/data/data.csv').then(function(chartData) {
         data.poverty = +data.poverty;
     });
 
-    // Testing readability of the data --- removing later ---
-    // var states = data.map(data => data.state);
-    // console.log('states', states);
-    // ---
-
 // Scaling 'y' to chart height:
 var yScale = d3.scaleLinear()
-.domain([0, d3.max(chartData, d => d.healthcare)])
+.domain([d3.min(chartData, d => d.healthcare) -3, d3.max(chartData, d => d.healthcare) +3])
 .range([chartHeight, 0]);
 
 // Scaling 'x' to chart width:
 var xScale = d3.scaleLinear()
-.domain([8, d3.max(chartData, d => d.poverty)])
+.domain([d3.min(chartData, d => d.poverty) -1, d3.max(chartData, d => d.poverty) +1])
 .range([0, chartWidth]);
 
 // Creating axes:
@@ -74,7 +67,6 @@ chartGroup.append('g')
 
 // Setting 'y' to the left of the chart:
 chartGroup.append('g')
-// .attr('transform', `translate(0, ${chartWidth})`)
 .call(yAxis);
 
 // Appending circles:
@@ -85,8 +77,19 @@ var circlesGroup = chartGroup.selectAll('circle')
     .attr('class', 'stateCircle')
     .attr('cx', d => xScale(d.poverty))
     .attr('cy', d => yScale(d.healthcare))
-    .attr('r', 10)
+    .attr('r', 15)
 
+// Appending the state abbreviations to the center of the circles:
+var circlesText = textGroup.selectAll('text')
+    .data(chartData)
+    .enter()
+    .append('text')
+    .attr('class', 'stateText')
+    .attr('dx', d => xScale(d.poverty))
+    .attr('dy', d => yScale(d.healthcare))
+    .text(function(d) {
+        return (d.abbr);
+    })
 
 // Step 1: Initialize Tooltip
 var toolTip = d3.tip()
@@ -98,9 +101,13 @@ var toolTip = d3.tip()
 
 // Step 2: Create the tooltip in chartGroup.
 circlesGroup.call(toolTip);
+circlesText.call(toolTip);
 
 // Step 3: Create "mouseover" event listener to display tooltip
 circlesGroup.on('mouseover', function(d) {
+    toolTip.show(d, this);
+})
+circlesText.on('mouseover', function(d) {
     toolTip.show(d, this);
 })
 
@@ -108,6 +115,19 @@ circlesGroup.on('mouseover', function(d) {
     .on('mouseout', function(d) {
     toolTip.hide(d);
     });
+
+// Creating axes labels:
+chartGroup.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 0 - chartMargin.left + 40)
+      .attr('x', 0 - (chartHeight / 2))
+      .attr('class', 'aText')
+      .text('Lacks Healthcare (%)');
+
+    chartGroup.append('text')
+      .attr('transform', `translate(${chartWidth / 2}, ${chartHeight + chartMargin.top + 30})`)
+      .attr('class', 'aText')
+      .text('In Poverty (%)');
 
 }).catch(function(error) {
 console.log(error);
