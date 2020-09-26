@@ -41,7 +41,7 @@ var textGroup = svg.append('g')
 // Loading/pulling the data from 'data.csv' using D3:
 d3.csv('assets/data/data.csv').then(function(chartData) {
 
-    // Parsing the data, to format the values to string:
+    // Parsing the data, to format the string to numeric values:
     chartData.forEach(function(data) {
         data.healthcare = +data.healthcare;
         data.poverty = +data.poverty;
