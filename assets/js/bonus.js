@@ -67,22 +67,22 @@ function yScale(chartData, chosenYAxis) {
 
 // This function is used for updating the x-axis var upon 'click' on axes label:
 function renderXAxes(newXScale, xAxis) {
-    var xAxis = d3.axisBottom(newXScale);
+    var xAxes = d3.axisBottom(newXScale);
 
     xAxis.transition()
         .duration(1000)
-        .call(xAxis);
+        .call(xAxes);
 
     return xAxis;
 }
 
 // This function is used for updating the y-axis var upon 'click' on axes label:
 function renderYAxes(newYScale, yAxis) {
-    var yAxis = d3.axisLeft(newYScale);
+    var yAxes = d3.axisLeft(newYScale);
 
     yAxis.transition()
         .duration(1000)
-        .call(yAxis);
+        .call(yAxes);
 
     return yAxis;
 }
@@ -122,8 +122,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
         if (chosenYAxis === 'healthcare') {
             xLabel = 'Poverty (%):';
             yLabel = 'Healthcare (%):';
-    }
-    else (chosenYAxis === 'smokes') {
+        } else if (chosenYAxis === 'smokes') {
             xLabel = 'Poverty (%):';
             yLabel = 'Smokes (%):';
         }
@@ -133,8 +132,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
         if (chosenYAxis === 'healthcare') {
             xLabel = 'Age (Median):';
             yLabel = 'Healthcare (%):';
-    }
-    else (chosenYAxis === 'smokes') {
+        } else if (chosenYAxis === 'smokes') {
             xLabel = 'Age (Median):';
             yLabel = 'Smokes (%):';
         }
@@ -143,7 +141,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     // Step 1: Initialize Tooltip
     var toolTip = d3.tip()
         .attr('class', 'd3-tip')
-        .offset([80, -60])
+        .offset([100, -60])
         .html(function(d) {
             if (chosenXAxis === 'poverty') {
                 return (`<b>${d.state}</b><hr>${xLabel} ${d[chosenXAxis]}<br>${yLabel} ${d[chosenYAxis]}`)
@@ -201,12 +199,12 @@ d3.csv('assets/data/data.csv').then(function(chartData, err) {
     var yAxis = d3.axisLeft(yLinearScale);
 
     // Setting 'x' to the bottom of the chart:
-    chartGroup.append('g')
+   var x = chartGroup.append('g')
         .attr('transform', `translate(0, ${chartHeight})`)
         .call(xAxis);
 
     // Setting 'y' to the left of the chart:
-    chartGroup.append('g')
+   var y = chartGroup.append('g')
         .call(yAxis);
 
     // Appending circles:
@@ -277,9 +275,9 @@ d3.csv('assets/data/data.csv').then(function(chartData, err) {
             if (value !== chosenXAxis) {
                 chosenXAxis = value;
                 xLinearScale = xScale(chartData, chosenXAxis);
-                xAxis = renderXAxes(xLinearScale, xAxis);
+                xAxis = renderXAxes(xLinearScale, x);
                 circlesGroup = renderXCircles(circlesGroup, xLinearScale, chosenXAxis, circlesText);
-                circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+                circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
                 if (chosenXAxis === 'poverty') {
                     povertyLabel
@@ -307,9 +305,9 @@ d3.csv('assets/data/data.csv').then(function(chartData, err) {
         if (value !== chosenYAxis) {
             chosenYAxis = value;
             yLinearScale = yScale(chartData, chosenYAxis);
-            yAxis = renderYAxes(yLinearScale, yAxis);
+            yAxis = renderYAxes(yLinearScale, y);
             circlesGroup = renderYCircles(circlesGroup, yLinearScale, chosenYAxis, circlesText);
-            circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
+            circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
             if (chosenYAxis === 'poverty') {
                 povertyLabel
